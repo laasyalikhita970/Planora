@@ -23,4 +23,27 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.delete("/:id", async (req, res) => {
+
+  console.log("DELETE ROUTE HIT");
+
+  try {
+
+    await Event.findByIdAndDelete(req.params.id);
+
+    res.json({
+      message: "Event deleted successfully",
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message,
+    });
+
+  }
+});
+router.get("/test", (req, res) => {
+  res.send("TEST ROUTE WORKING");
+});
 module.exports = router;
