@@ -2,11 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Event = require("../models/Event");
 
-// TEST ROUTE
-router.get("/test", (req, res) => {
-  res.send("TEST ROUTE WORKING");
-});
-
 // CREATE EVENT
 router.post("/", async (req, res) => {
   try {
@@ -17,11 +12,9 @@ router.post("/", async (req, res) => {
     res.json(event);
 
   } catch (error) {
-
     res.status(500).json({
       error: error.message,
     });
-
   }
 });
 
@@ -34,11 +27,9 @@ router.get("/", async (req, res) => {
     res.json(events);
 
   } catch (error) {
-
     res.status(500).json({
       error: error.message,
     });
-
   }
 });
 
@@ -49,15 +40,32 @@ router.delete("/:id", async (req, res) => {
     await Event.findByIdAndDelete(req.params.id);
 
     res.json({
-      message: "Event deleted successfully",
+      message: "Deleted successfully",
     });
 
   } catch (error) {
-
     res.status(500).json({
       error: error.message,
     });
+  }
+});
 
+// UPDATE EVENT
+router.put("/:id", async (req, res) => {
+  try {
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    res.json(updatedEvent);
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
   }
 });
 

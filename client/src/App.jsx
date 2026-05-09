@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import "./App.css";
 
 function App() {
   const [events, setEvents] = useState([]);
@@ -7,6 +8,11 @@ function App() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
+  const [date, setDate] = useState("");
+  const [editingId, setEditingId] = useState(null);
+const [isEditing, setIsEditing] = useState(false);
+const [search, setSearch] = useState("");
+const [darkMode, setDarkMode] = useState(false);
 
   // Fetch events
   const fetchEvents = async () => {
@@ -22,27 +28,30 @@ function App() {
     fetchEvents();
   }, []);
 
-  // Create event
-  const createEvent = async () => {
-    try {
-      await axios.post("/api/events", {
-        title,
-        description,
-        location,
-      });
+  // Create Event
+const createEvent = async () => {
+  try {
 
-      // clear inputs
-      setTitle("");
-      setDescription("");
-      setLocation("");
+    await axios.post("/api/events", {
+      title,
+      description,
+      location,
+      date,
+    });
 
-      // refresh events
-      fetchEvents();
+    // Clear form
+    setTitle("");
+    setDescription("");
+    setLocation("");
+    setDate("");
 
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    // Refresh events
+    fetchEvents();
+
+  } catch (error) {
+    console.log(error);
+  }
+};
   const deleteEvent = async (id) => {
 
   console.log("DELETE CLICKED", id);
@@ -61,22 +70,66 @@ function App() {
 
   }
 };
+const editEvent = (event) => {
+  setTitle(event.title);
+  setDescription(event.description);
+  setLocation(event.location);
+setDate(event.date?.split("T")[0]);
+  setEditingId(event._id);
+
+  setIsEditing(true);
+};
+// Update Event
+const updateEvent = async () => {
+  try {
+
+    await axios.put(`/api/events/${editingId}`, {
+      title,
+      description,
+      location,
+      date,
+    });
+
+    // Clear form
+    setTitle("");
+    setDescription("");
+    setLocation("");
+    setDate("");
+
+    setEditingId(null);
+    setIsEditing(false);
+
+    // Refresh events
+    fetchEvents();
+
+  } catch (error) {
+    console.log(error);
+  }
+};
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Planora 🚀</h1>
+    <div className={darkMode ? "container dark" : "container"}>
+      <h1 className="heading">Planora 🚀</h1>
+      <button
+  className="mode-btn"
+  onClick={() => setDarkMode(!darkMode)}
+>
+  {darkMode ? "Light Mode ☀️" : "Dark Mode 🌙"}
+</button>
 
       <h2>Create Event</h2>
-
-      <input
-        type="text"
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
+      <div className="form">
+        <input
+  className="input search-box"
+          type="text"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
 
       <br /><br />
 
       <input
+  className="input search-box"
         type="text"
         placeholder="Description"
         value={description}
@@ -86,28 +139,65 @@ function App() {
       <br /><br />
 
       <input
+  className="input search-box"
         type="text"
         placeholder="Location"
         value={location}
         onChange={(e) => setLocation(e.target.value)}
       />
+      <input
+  className="input search-box"
+  type="date"
+  value={date}
+  onChange={(e) => setDate(e.target.value)}
+/>
 
       <br /><br />
 
-      <button onClick={createEvent}>
-        Add Event
-      </button>
+    <button
+  className="button"
+  onClick={() => {
+    if (isEditing) {
+      updateEvent();
+    } else {
+      createEvent();
+    }
+  }}
+>
+  {isEditing ? "Update Event" : "Add Event"}
+</button>
+      </div>
 
       <hr />
-
+      <input
+  className="input search-box"
+  type="text"
+  placeholder="Search events..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+/>
       <h2>All Events</h2>
 
-      {events.map((event) => (
-        <div key={event._id}>
+      {events
+  .filter((event) =>
+    event.title.toLowerCase().includes(search.toLowerCase())
+  )
+  .map((event) => (
+        <div className="event-card" key={event._id}>
           <h3>{event.title}</h3>
           <p>{event.description}</p>
           <p>{event.location}</p>
-          <button onClick={() => deleteEvent(event._id)}>
+          <p>{event.date?.split("T")[0]}</p>
+          <button
+  className="button"
+  onClick={() => editEvent(event)}
+>
+  Edit
+</button>
+          <button
+  className="delete-btn"
+  onClick={() => deleteEvent(event._id)}
+>
   Delete
 </button>
           <hr />
