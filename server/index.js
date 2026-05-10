@@ -1,12 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+const authRoutes = require("./routes/authRoutes");
 require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 const eventRoutes = require("./routes/eventRoutes");
 const app = express();
 
 app.use(express.json());
 app.use("/api/events", eventRoutes);
+app.use("/api/auth", authRoutes);
 
 const mongoUri = process.env.MONGO_URI?.trim();
 if (!mongoUri) {

@@ -299,3 +299,155 @@ hr {
     width: 90%;
   }
 }
+
+select {
+  width: 100%;
+  padding: 16px;
+  margin-top: 18px;
+  border-radius: 14px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* DARK MODE SELECT */
+.container.dark select {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+
+/* LIGHT MODE SELECT */
+.container:not(.dark) select {
+  background: white;
+  color: black;
+}
+
+/* DROPDOWN OPTIONS */
+select option {
+  background: #1e293b;
+  color: white;
+}
+
+.status {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.upcoming {
+  background: #2563eb;
+  color: white;
+}
+
+.ongoing {
+  background: #f59e0b;
+  color: white;
+}
+
+.completed {
+  background: #10b981;
+  color: white;
+}
+
+.event-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 18px;
+  margin-bottom: 18px;
+}
+
+.event-card {
+  overflow: hidden;
+}
+
+.event-image {
+  transition: 0.4s;
+}
+
+.event-card:hover .event-image {
+  transform: scale(1.05);
+}
+
+.stats-container {
+  width: 100%;
+  max-width: 1200px;
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+  gap: 20px;
+
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  padding: 30px;
+
+  border-radius: 22px;
+
+  text-align: center;
+
+  transition: 0.4s;
+}
+
+.container.dark .stat-card {
+  background: rgba(255,255,255,0.08);
+}
+
+.container:not(.dark) .stat-card {
+  background: rgba(255,255,255,0.7);
+}
+
+.stat-card h3 {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.stat-card p {
+  font-size: 42px;
+  font-weight: bold;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 500px;
+
+  padding: 40px;
+
+  border-radius: 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  margin-top: 50px;
+}
+
+.container.dark .auth-box {
+  background: rgba(255,255,255,0.08);
+}
+
+.container:not(.dark) .auth-box {
+  background: rgba(255,255,255,0.7);
+}
+
+.switch-text {
+  margin-top: 10px;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  font-weight: bold;
+}
