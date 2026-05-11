@@ -17,21 +17,25 @@ const [user, setUser] = useState(null);
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [date, setDate] = useState("");
-  const [image, setImage] = useState("");
   const [category, setCategory] = useState("");
   const [editingId, setEditingId] = useState(null);
 const [isEditing, setIsEditing] = useState(false);
 const [search, setSearch] = useState("");
 const [status, setStatus] = useState("Upcoming");
-
-const [darkMode, setDarkMode] = useState(() => {
-  return localStorage.getItem("darkMode") === "true";
-});
+const [loading, setLoading] = useState(false);
+const [darkMode, setDarkMode] = useState(true);
 
   // Fetch events
   const fetchEvents = async () => {
     try {
-      const response = await axios.get("/api/events");
+      const response = await axios.get(
+  "/api/events",
+  {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  }
+);
       setEvents(response.data);
     } catch (error) {
       console.log(error);
@@ -57,43 +61,50 @@ useEffect(() => {
 
   // Create Event
 const createEvent = async () => {
+
   try {
 
-   await axios.post(
-  "/api/events",
-  {
-    title,
-    description,
-    location,
-    date,
-    category,
-    status,
-    image,
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  }
-);
+    setLoading(true);
 
-    // Clear form
+    await axios.post(
+  "/api/events",
+        {
+          title,
+          description,
+          location,
+          date,
+          category,
+        status,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
     setTitle("");
     setDescription("");
     setLocation("");
     setDate("");
     setCategory("");
     setStatus("Upcoming");
-    setImage("");
-
-    // Refresh events
     fetchEvents();
+
     toast.success("Event Added Successfully!");
 
   } catch (error) {
+
     console.log(error);
-toast.error("Something went wrong!");
+
+    toast.error("Something went wrong!");
+
+  } finally {
+
+    setLoading(false);
+
   }
+
 };
   const deleteEvent = async (id) => {
 
@@ -130,7 +141,7 @@ const editEvent = (event) => {
   setDate(event.date?.split("T")[0]);
   setCategory(event.category);
   setStatus(event.status);
-  setImage(event.image);
+  // setImage(event.image);
   setEditingId(event._id);
 
   setIsEditing(true);
@@ -148,7 +159,6 @@ const updateEvent = async () => {
     date,
     category,
     status,
-    image,
   },
   {
     headers: {
@@ -163,7 +173,7 @@ const updateEvent = async () => {
     setDate("");
     setCategory("");
     setStatus("Upcoming");
-    setImage("");
+    // setImage("");
     setEditingId(null);
     setIsEditing(false);
 
@@ -285,18 +295,10 @@ const logout = () => {
     className="button"
     onClick={() => {
       if (isLogin) {
-
-  console.log("LOGIN CLICKED");
-
-  login();
-
-} else {
-
-  console.log("SIGNUP CLICKED");
-
-  signup();
-
-}
+        login();
+      } else {
+        signup();
+      }
     }}
   >
     {isLogin ? "Login" : "Signup"}
@@ -314,23 +316,38 @@ const logout = () => {
   </p>
 
 </div>
-
 ) : (
   <>
-      
-      <h1 className="heading">Planora 🚀</h1>
-      <button
-  className="mode-btn"
-  onClick={logout}
->
-  Logout
-</button>
-      <button
+      <div className="navbar">
+
+  <h1 className="logo">
+    Planora 🚀
+  </h1>
+
+  <div className="nav-right">
+
+    <p className="welcome-text">
+      Welcome, {user?.name}
+    </p>
+
+    <button
   className="mode-btn"
   onClick={() => setDarkMode(!darkMode)}
 >
-  {darkMode ? "Light Mode ☀️" : "Dark Mode 🌙"}
+  {darkMode ? "☀️" : "🌙"}
 </button>
+
+    <button
+      className="logout-btn"
+      onClick={logout}
+    >
+      Logout
+    </button>
+
+  </div>
+
+</div>
+      
 
       <h2>Create Event</h2>
       <div className="form">
@@ -367,13 +384,6 @@ const logout = () => {
   value={date}
   onChange={(e) => setDate(e.target.value)}
 />
-<input
-  className="input search-box"
-  type="text"
-  placeholder="Paste Image URL"
-  value={image}
-  onChange={(e) => setImage(e.target.value)}
-/>
 <select
   className="input search-box"
   value={category}
@@ -399,6 +409,7 @@ const logout = () => {
 
    <button
   className="button"
+disabled={loading}
   onClick={() => {
     if (isEditing && editingId) {
       updateEvent();
@@ -407,7 +418,13 @@ const logout = () => {
     }
   }}
 >
-  {isEditing ? "Update Event" : "Add Event"}
+  {
+  loading
+    ? "Please Wait..."
+    : isEditing
+    ? "Update Event"
+    : "Add Event"
+}
 </button>
       </div>
 
@@ -468,11 +485,6 @@ const logout = () => {
   )
   .map((event) => (
         <div className="event-card" key={event._id}>
-          <img
-  src={event.image}
-  alt={event.title}
-  className="event-image"
-/>
           <h3>{event.title}</h3>
           <p>{event.description}</p>
           <p>{event.location}</p>

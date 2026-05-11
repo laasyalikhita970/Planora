@@ -23,6 +23,8 @@ router.get("/", async (req, res) => {
   }
 });
 
+
+
 router.delete("/:id", async (req, res) => {
 
   console.log("DELETE ROUTE HIT");

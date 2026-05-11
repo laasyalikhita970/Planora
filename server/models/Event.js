@@ -4,14 +4,14 @@ const eventSchema = new mongoose.Schema({
   title: String,
   description: String,
   location: String,
-  date: Date,
+  date: String,
   category: String,
+  status: String,
 
-  status: {
-    type: String,
-    default: "Upcoming",
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
   },
-  image: String,
 });
 
 module.exports = mongoose.model("Event", eventSchema);
